@@ -1,7 +1,8 @@
 require("dotenv").config();
-import mongoose from "mongoose";
-main().catch((err) => console.log(err));
+const mongoose = require("mongoose");
 const MONGO_DB_URL = process.env.MONGO_DB_URL;
+
+main().catch((err) => console.log(err));
 
 async function main() {
   await mongoose.connect(MONGO_DB_URL);
@@ -32,4 +33,4 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model("User", userSchema);
 
-export default User;
+module.exports = User;
