@@ -13,6 +13,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 const signupBody = z.object({
   name: z.string().max(50),
+  email: z.string().email(),
   username: z.string().min(3).max(30),
   password: z.string().min(6),
 });
@@ -26,10 +27,12 @@ router.post("/signup", async (req, res) => {
         .status(400)
         .json({ message: "Invalid types", error: result.error });
 
-    const user = await User.findOne({ username: body.username });
+    const user = await User.findOne({
+      $or: [{ username: body.username }, { email: body.email }],
+    });
 
     if (user) {
-      return res.status(411).json({
+      return res.status(409).json({
         message: "User already exists",
       });
     }
@@ -49,7 +52,7 @@ router.post("/signup", async (req, res) => {
 });
 
 const signinBody = z.object({
-  username: z.string().min(3).max(30),
+  identifier: z.string().min(3).max(30),
   password: z.string().min(6),
 });
 
@@ -62,7 +65,7 @@ router.post("/signin", async (req, res) => {
       res.status(400).json({ message: "Invalid types", error: result.error });
 
     const user = await User.findOne({
-      username: body.username,
+      $or: [{ username: body.identifier }, { email: body.identifier }],
       password: body.password,
     });
 
@@ -85,6 +88,7 @@ router.post("/signin", async (req, res) => {
 const updateBody = z.object({
   name: z.string().max(50).optional(),
   username: z.string().min(3).max(30).optional(),
+  email: z.string().email().optional(),
   password: z.string().min(6).optional(),
 });
 
@@ -106,6 +110,7 @@ router.get("/bulk", authMiddleware, async (req, res) => {
     $or: [
       { name: { $regex: ".*" + filterString + ".*" } },
       { username: { $regex: ".*" + filterString + ".*" } },
+      { email: { $regex: ".*" + filterString + ".*" } },
     ],
   }).limit(5);
   return res.json(x);
