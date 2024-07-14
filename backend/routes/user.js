@@ -79,6 +79,7 @@ router.post("/signin", async (req, res) => {
 
     return res.status(200).json({
       token,
+      name: user.name,
     });
   } catch (err) {
     return res.status(411).send(err.message);
@@ -108,9 +109,9 @@ router.get("/bulk", authMiddleware, async (req, res) => {
   const filterString = req.query.filter?.toLowerCase() || "";
   const x = await User.find({
     $or: [
-      { name: { $regex: ".*" + filterString + ".*" } },
-      { username: { $regex: ".*" + filterString + ".*" } },
-      { email: { $regex: ".*" + filterString + ".*" } },
+      { name: { $regex: `.*${filterString}.*`, $options: "i" } },
+      { username: { $regex: `.*${filterString}.*`, $options: "i" } },
+      { email: { $regex: `.*${filterString}.*`, $options: "i" } },
     ],
   }).limit(5);
   return res.json(x);
