@@ -18,7 +18,7 @@ export default function Signin() {
   }, [status, setStatus, navigate]);
 
   return (
-    <div className="flex items-center justify-center h-screen bg-neutral-500">
+    <div className="flex items-center justify-center h-screen bg-neutral-900">
       <div className="flex flex-col gap-3 w-[400px] h-[480px]  rounded-xl p-6 shadow-2xl shadow-zinc-800 bg-white">
         <h1 className="text-center font-bold text-4xl">Sign In</h1>
         <h4 className="text-center text-xl text-gray-500 font-semibold">
